@@ -1,0 +1,214 @@
+{
+  "weeks": [
+    {
+      "id": "week-01",
+      "week": "Week 01",
+      "date": "29th Aug",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-02",
+      "week": "Week 02",
+      "date": "4th Sep",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-03",
+      "week": "Week 03",
+      "date": "11th Sep",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-04",
+      "week": "Week 04",
+      "date": "18th Sep",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-05",
+      "week": "Week 05",
+      "date": "25th Sep",
+      "title": "TouchDesigner Studies",
+      "description": "Iterations in TouchDesigner: scatter, pulse, flip, and rotate, then color, cube merges, and the final network.",
+      "process": [
+        {
+          "title": "Scatter and Pulse, First Iteration",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_scatterandpaulse_firstiteration.mov"
+        },
+        {
+          "title": "Rotate and Pulse",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_rotate&paulse.mov"
+        },
+        {
+          "title": "Flip, First Iteration",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_flip_firstiteration.mov"
+        },
+        {
+          "title": "Second Phase, Rotate Grid",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_secondphase_rotategrid.mov"
+        },
+        {
+          "title": "Color Gradient",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_color_gradient.mov"
+        },
+        {
+          "title": "Merge, Outline and Full Cubes",
+          "type": "image",
+          "src": "media/week_05_sep15/touchdesigner_merge_outline&fullcubes.jpg"
+        },
+        {
+          "title": "Merge, Outline and Full Cubes 02",
+          "type": "image",
+          "src": "media/week_05_sep15/touchdesigner_merge_outline&fullcubes02.jpg"
+        },
+        {
+          "title": "Swell Network",
+          "type": "image",
+          "src": "media/week_05_sep15/touchdesigner_swell_network.jpg"
+        },
+        {
+          "title": "Final Network",
+          "type": "image",
+          "src": "media/week_05_sep15/touchdesigner_final_network.jpg"
+        },
+        {
+          "title": "Final Outcome",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_final_outcome.mov"
+        },
+        {
+          "title": "Final Outcome 02",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_final_outcome02.mov"
+        },
+        {
+          "title": "Final Outcome 03",
+          "type": "video",
+          "src": "media/week_05_sep15/touchdesigner_final_outcome03.mov"
+        }
+      ]
+    },
+    {
+      "id": "week-06",
+      "week": "Week 06",
+      "date": "2nd Oct",
+      "title": "From TouchDesigner to the Web",
+      "description": "The same material rebuilt in the browser: coded animation, type driven by music, and a VHS filter on the final pass.",
+      "process": [
+        {
+          "title": "Animation, Coded",
+          "type": "video",
+          "src": "media/week_06_oct02/animation_coded.mov"
+        },
+        {
+          "title": "Music Reacting to Type",
+          "type": "video",
+          "src": "media/week_06_oct02/music_reacting_to_type.mov"
+        },
+        {
+          "title": "Music Reacting to Type and Animation",
+          "type": "video",
+          "src": "media/week_06_oct02/music_reacting_type&animation.mov"
+        },
+        {
+          "title": "Final with VHS Filter",
+          "type": "video",
+          "src": "media/week_06_oct02/final_with_VHSfilter.mov"
+        }
+      ]
+    },
+    {
+      "id": "week-07",
+      "week": "Week 07",
+      "date": "9th Oct",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-08",
+      "week": "Week 08",
+      "date": "16th Oct",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-09",
+      "week": "Week 09",
+      "date": "23rd Oct",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-10",
+      "week": "Week 10",
+      "date": "30th Oct",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-11",
+      "week": "Week 11",
+      "date": "6th Nov",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-12",
+      "week": "Week 12",
+      "date": "13th Nov",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-13",
+      "week": "Week 13",
+      "date": "20th Nov",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-14",
+      "week": "Week 14",
+      "date": "27th Nov",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-15",
+      "week": "Week 15",
+      "date": "4th Dec",
+      "title": "",
+      "description": "",
+      "process": []
+    },
+    {
+      "id": "week-16",
+      "week": "Week 16",
+      "date": "11th Dec",
+      "title": "",
+      "description": "",
+      "process": []
+    }
+  ]
+}

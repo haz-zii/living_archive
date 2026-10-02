@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Living Archive</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="header">
+
+                <div class="naming">
+                    <div id="hero-title">LIVING ARCHIVE</div >
+                    <div class="class"><a class="class date" href="https://www.hazuniverse.com">HAZ | MY PORTFOLIO</a></div>
+                </div>
+
+                <div class="class">
+                    <div>{*}</div>
+                    <div>THESIS 26-27</div>
+                    <button type="button" class="view-all" id="view-all">VIEW ALL IN ONE</button>
+                </div>
+                
+            </div>
+
+            <div class="content" id="archive-list" aria-label="Weeks"></div>
+                
+        </div>
+
+        <aside class="doc-panel" id="doc-panel" aria-hidden="true" inert>
+            <div class="doc-body" id="doc-body"></div>
+        </aside>
+
+        <div class="all-weeks-layer" id="all-weeks-layer" aria-hidden="true" inert>
+            <div class="all-weeks" id="all-weeks" role="dialog" aria-modal="true" aria-labelledby="all-weeks-label">
+                <div class="all-weeks-bar">
+                    <p class="all-weeks-label" id="all-weeks-label">ALL WEEKS</p>
+                    <button type="button" class="doc-close" data-close-all aria-label="Close">×</button>
+                </div>
+                <div class="all-weeks-scroll" id="all-weeks-scroll"></div>
+            </div>
+        </div>
+        
+        
+        <script src="script.js" async defer></script>
+    </body>
+</html>

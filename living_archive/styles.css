@@ -1,0 +1,470 @@
+*{
+    font-family: "Azeret Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: <weight>;
+    font-style: normal;
+}
+
+
+body{
+    background-color: black;
+    margin: auto;
+    padding: 20px;
+}
+
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 95vh;
+    max-width: 100vw;
+
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.naming{
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-shrink: 0;
+    justify-content: space-between;
+}
+
+.class{
+    display: flex;
+    width: fit-content%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    flex-shrink: 0;
+    gap: 21px;
+    color: #FFF;
+    text-align: right;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: -2.234px;
+    font-size: 15px;
+}
+
+#hero-title {
+    color: #FFF;
+    font-family: "Azeret Mono";
+    font-size: 65.6px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: normal;
+    letter-spacing: -6.56px;
+
+    position: relative;
+    display: inline-block;
+}
+
+#hero-title::before,
+#hero-title::after {
+    content: "LIVING ARCHIVE";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    color: #FFF;
+    background: black;
+
+    overflow: hidden;
+    pointer-events: none;
+
+    opacity: 0;
+}
+
+#hero-title::before {
+    left: 3px;
+    text-shadow:
+        -2px 0 #DFFF0D,
+        2px 0 #1C1CD1;
+
+    animation: glitch-1 6s linear infinite;
+}
+
+#hero-title::after {
+    left: -3px;
+    text-shadow:
+        -2px 0 #DFFF0D,
+        2px 0 #DFFF0D;
+
+    animation: glitch-2 6s linear infinite;
+}
+
+
+@keyframes glitch-1 {
+
+    0%,
+    70%,
+    100% {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    72% {
+        opacity: 1;
+        clip-path: inset(20% 0 65% 0);
+    }
+
+    74% {
+        opacity: 1;
+        clip-path: inset(60% 0 20% 0);
+    }
+
+    76% {
+        opacity: 0;
+        clip-path: inset(40% 0 40% 0);
+    }
+
+    78% {
+        opacity: 1;
+        clip-path: inset(75% 0 5% 0);
+    }
+
+    80% {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+}
+
+
+@keyframes glitch-2 {
+
+    0%,
+    72%,
+    100% {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    73% {
+        opacity: 1;
+        clip-path: inset(65% 0 15% 0);
+    }
+
+    75% {
+        opacity: 1;
+        clip-path: inset(15% 0 70% 0);
+    }
+
+    77% {
+        opacity: 0;
+        clip-path: inset(45% 0 35% 0);
+    }
+
+    79% {
+        opacity: 1;
+        clip-path: inset(30% 0 50% 0);
+    }
+
+    81% {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+}
+
+
+.content{
+    color: #FFF;
+    font-family: "Azeret Mono";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -2px;
+    display: flex;
+    gap: 29px;
+    flex-wrap: wrap;
+}
+
+.date{
+    color: #FFF;
+    font-family: "Azeret Mono";
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: -2px;
+    font-size: 15px;
+}
+
+.date:hover{
+    color: #DFFF0D;
+    transform: translateY(-2px);
+}
+
+a {
+    text-decoration: none;
+}
+
+.content button.date {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.content button.date.is-active {
+    color: #DFFF0D;
+}
+
+.content button.date:focus-visible,
+.doc-close:focus-visible,
+.view-all:focus-visible {
+    outline: 1px solid #DFFF0D;
+    outline-offset: 3px;
+}
+
+button.view-all {
+    appearance: none;
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: right;
+    cursor: pointer;
+}
+
+button.view-all:hover {
+    color: #DFFF0D;
+    transform: translateY(-2px);
+}
+
+body:has(.doc-panel.is-open) button.view-all {
+    position: relative;
+    z-index: 30;
+}
+
+.doc-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    width: 480px;
+    max-width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    box-sizing: border-box;
+    padding: 20px;
+    background: #000;
+    color: #FFF;
+    color-scheme: dark;
+    border-left: 1px solid rgba(255, 255, 255, 0.28);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(100%);
+    transition: transform 0.32s ease;
+    pointer-events: none;
+}
+
+.doc-panel.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.doc-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 21px;
+}
+
+.doc-kicker {
+    margin: 0;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 15px;
+    font-weight: 300;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: -2px;
+}
+
+.doc-close {
+    appearance: none;
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 32px;
+    min-height: 32px;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -2px;
+    cursor: pointer;
+}
+
+.doc-close:hover {
+    color: #DFFF0D;
+}
+
+.doc-title {
+    margin: 29px 0 0;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: -2px;
+}
+
+.doc-copy {
+    margin: 21px 0 0;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 15px;
+    font-weight: 300;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: -0.4px;
+}
+
+.doc-process {
+    margin-top: 29px;
+    padding-top: 21px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.doc-process-title,
+.doc-caption {
+    margin: 0;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 15px;
+    font-weight: 300;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: -1px;
+}
+
+.doc-caption {
+    margin-top: 12px;
+    letter-spacing: -0.4px;
+    line-height: 1.5;
+}
+
+.doc-media {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-top: 12px;
+    background: #000;
+}
+
+.all-weeks-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.all-weeks {
+    width: 86vw;
+    height: 86vh;
+    height: 86dvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    color: #FFF;
+    color-scheme: dark;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.all-weeks-layer.is-open .all-weeks {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.all-weeks-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 21px;
+    flex-shrink: 0;
+    padding: 20px 20px 0;
+}
+
+.all-weeks-label {
+    margin: 0;
+    color: #FFF;
+    font-family: "Azeret Mono", monospace;
+    font-size: 15px;
+    font-weight: 300;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: -2px;
+}
+
+.all-weeks-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 29px 20px 20px;
+}
+
+.all-week + .all-week {
+    margin-top: 42px;
+}
+
+.all-week-rule {
+    height: 1px;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 760px) {
+    .doc-panel {
+        width: 92vw;
+    }
+
+    .all-weeks {
+        width: 94vw;
+        height: 90vh;
+        height: 90dvh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .doc-panel,
+    .all-weeks {
+        transition: none;
+    }
+}
+
