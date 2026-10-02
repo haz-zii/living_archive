@@ -14,6 +14,7 @@ let allRendered = false;
 let edits = {};
 let uploads = [];
 let dragBlockId = "";
+let saveError = "";
 
 function init() {
   edits = loadEdits();
@@ -157,8 +158,13 @@ function renderPanel(week, options = {}) {
   }
   if (options.focusId) {
     const blockNode = panel.querySelector(`[data-block-id="${CSS.escape(options.focusId)}"]`);
-    const preferred = blockNode?.querySelector(`[data-move="${options.focusMove}"]:not(:disabled)`);
-    (preferred || blockNode?.querySelector("[data-move]:not(:disabled)"))?.focus();
+    const field = blockNode?.querySelector("textarea");
+    if (field) {
+      field.focus();
+    } else {
+      const preferred = blockNode?.querySelector(`[data-move="${options.focusMove}"]:not(:disabled)`);
+      (preferred || blockNode?.querySelector("button:not(:disabled)"))?.focus();
+    }
   }
 }
 
@@ -176,7 +182,7 @@ function renderAll(entries) {
 function renderWeekDocument(week, options) {
   const fragment = document.createDocumentFragment();
   const variant = options.variant;
-  const blocks = blocksFor(week);
+  const blocks = movableBlocks(week);
 
   if (variant === "timeline") {
     const kicker = element("p", "doc-kicker");
@@ -185,7 +191,15 @@ function renderWeekDocument(week, options) {
     fragment.append(element("div", "all-week-rule"));
   }
 
-  if (variant === "panel" && blocks.length === 0) {
+  if (week.title) {
+    fragment.append(renderBlock({
+      id: "title",
+      kind: "text",
+      variant: "title",
+      text: week.title,
+      locked: true
+    }, 0, 0, week, options));
+  } else if (variant === "panel" && blocks.length === 0) {
     const empty = element("p", "doc-copy");
     empty.textContent = "This week has not been documented yet.";
     fragment.append(empty);
@@ -195,16 +209,32 @@ function renderWeekDocument(week, options) {
     fragment.append(renderBlock(block, index, blocks.length, week, options));
   });
 
+  if (variant === "panel") {
+    fragment.append(renderAddText(week));
+    if (saveError) {
+      const status = element("p", "doc-save-status");
+      status.textContent = saveError;
+      fragment.append(status);
+    }
+  }
+
   fragment.append(renderFeedback(week, options));
   return fragment;
 }
 
 function renderBlock(block, index, total, week, options) {
   const section = element("section", "doc-block");
+  if (block.locked) {
+    section.classList.add("is-locked");
+  }
   section.dataset.blockId = block.id;
 
-  if (options.variant === "panel" && total > 1) {
-    section.append(renderBlockBar(block, index, total, week));
+  const canMove = options.variant === "panel" && !block.locked && total > 1;
+  const canDelete = options.variant === "panel" && block.kind === "text" && !block.locked;
+  if (canMove || canDelete) {
+    section.append(renderBlockBar(block, index, total, week, canMove));
+  }
+  if (canMove) {
     section.addEventListener("dragover", (event) => {
       event.preventDefault();
       section.classList.add("is-drop");
@@ -220,6 +250,19 @@ function renderBlock(block, index, total, week, options) {
   }
 
   if (block.kind === "text") {
+    if (options.variant === "panel" && block.id.startsWith("p-")) {
+      const input = document.createElement("textarea");
+      input.className = "doc-input";
+      input.rows = 3;
+      input.value = block.text;
+      input.setAttribute("aria-label", "Paragraph");
+      input.addEventListener("input", () => {
+        updateParagraph(week, block.id, input.value);
+      });
+      section.append(input);
+      return section;
+    }
+
     const tag = block.variant === "title" ? "h2" : block.variant === "process-title" ? "h3" : "p";
     const className = block.variant === "title"
       ? "doc-title"
@@ -243,29 +286,49 @@ function renderBlock(block, index, total, week, options) {
   return section;
 }
 
-function renderBlockBar(block, index, total, week) {
+function renderBlockBar(block, index, total, week, canMove) {
   const bar = element("div", "doc-block-bar");
-  const handle = element("span", "doc-handle");
-  handle.textContent = "↕";
-  handle.draggable = true;
-  handle.setAttribute("aria-hidden", "true");
-  handle.addEventListener("dragstart", (event) => {
-    dragBlockId = block.id;
-    event.dataTransfer.setData("text/plain", block.id);
-    event.dataTransfer.effectAllowed = "move";
-    handle.closest(".doc-block")?.classList.add("is-dragging");
-  });
-  handle.addEventListener("dragend", () => {
-    dragBlockId = "";
-    handle.closest(".doc-block")?.classList.remove("is-dragging");
-  });
+  if (canMove) {
+    const handle = element("span", "doc-handle");
+    handle.textContent = "↕";
+    handle.draggable = true;
+    handle.setAttribute("aria-hidden", "true");
+    handle.addEventListener("dragstart", (event) => {
+      dragBlockId = block.id;
+      event.dataTransfer.setData("text/plain", block.id);
+      event.dataTransfer.effectAllowed = "move";
+      handle.closest(".doc-block")?.classList.add("is-dragging");
+    });
+    handle.addEventListener("dragend", () => {
+      dragBlockId = "";
+      handle.closest(".doc-block")?.classList.remove("is-dragging");
+    });
 
-  const up = moveButton("Move up", -1, index === 0);
-  const down = moveButton("Move down", 1, index === total - 1);
-  up.addEventListener("click", () => moveBlock(week, block.id, -1));
-  down.addEventListener("click", () => moveBlock(week, block.id, 1));
-  bar.append(handle, up, down);
+    const up = moveButton("Move up", -1, index === 0);
+    const down = moveButton("Move down", 1, index === total - 1);
+    up.addEventListener("click", () => moveBlock(week, block.id, -1));
+    down.addEventListener("click", () => moveBlock(week, block.id, 1));
+    bar.append(handle, up, down);
+  }
+
+  if (block.kind === "text") {
+    const remove = element("button", "doc-inline");
+    remove.type = "button";
+    remove.textContent = "Delete";
+    remove.setAttribute("aria-label", "Delete text");
+    remove.addEventListener("click", () => deleteText(week, block.id));
+    bar.append(remove);
+  }
   return bar;
+}
+
+function renderAddText(week) {
+  const button = element("button", "doc-inline doc-add-text");
+  button.type = "button";
+  button.textContent = "<p>";
+  button.setAttribute("aria-label", "Add text");
+  button.addEventListener("click", () => addParagraph(week));
+  return button;
 }
 
 function moveButton(label, direction, disabled) {
@@ -417,34 +480,13 @@ function renderMedia(item, options) {
   return image;
 }
 
-function blocksFor(week) {
-  const base = Array.isArray(week.blocks) && week.blocks.length
-    ? explicitBlocks(week.blocks)
-    : legacyBlocks(week);
-  const order = edits[week.id]?.order;
-  if (!Array.isArray(order) || order.length === 0) {
-    return base;
-  }
-
-  const remaining = new Map(base.map((block) => [block.id, block]));
-  const ordered = [];
-  order.forEach((id) => {
-    const block = remaining.get(id);
-    if (!block) {
-      return;
-    }
-    ordered.push(block);
-    remaining.delete(id);
-  });
-  remaining.forEach((block) => ordered.push(block));
-  return ordered;
+function movableBlocks(week) {
+  const source = Array.isArray(week.blocks) ? explicitBlocks(week.blocks) : legacyBlocks(week);
+  return source.filter((block) => block.variant !== "title" && block.id !== "title");
 }
 
 function legacyBlocks(week) {
   const blocks = [];
-  if (week.title) {
-    blocks.push({ id: "title", kind: "text", variant: "title", text: week.title });
-  }
   if (week.description) {
     blocks.push({ id: "description", kind: "text", variant: "copy", text: week.description });
   }
@@ -487,7 +529,7 @@ function explicitBlocks(list) {
     };
   }).filter((block) => {
     if (block.kind === "text") {
-      return block.text;
+      return true;
     }
     return block.src && (block.kind === "image" || block.kind === "video");
   });
@@ -508,43 +550,116 @@ function uploadsFor(week) {
 }
 
 function moveBlock(week, id, direction) {
-  const blocks = blocksFor(week);
+  const blocks = movableBlocks(week);
   const index = blocks.findIndex((block) => block.id === id);
   const target = index + direction;
   if (index < 0 || target < 0 || target >= blocks.length) {
     return;
   }
-  const order = blocks.map((block) => block.id);
-  const [item] = order.splice(index, 1);
-  order.splice(target, 0, item);
-  rememberOrder(week.id, order);
-  rerenderPanel(week, { keepScroll: true, focusId: id, focusMove: direction });
+  const [item] = blocks.splice(index, 1);
+  blocks.splice(target, 0, item);
+  commitBlocks(week, blocks, { keepScroll: true, focusId: id, focusMove: direction });
 }
 
 function placeBlock(week, fromId, toId) {
-  if (!fromId || fromId === toId) {
+  if (!fromId || fromId === toId || fromId === "title" || toId === "title") {
     return;
   }
-  const order = blocksFor(week).map((block) => block.id);
-  const from = order.indexOf(fromId);
-  const to = order.indexOf(toId);
+  const blocks = movableBlocks(week);
+  const from = blocks.findIndex((block) => block.id === fromId);
+  const to = blocks.findIndex((block) => block.id === toId);
   if (from < 0 || to < 0) {
     return;
   }
-  order.splice(from, 1);
-  order.splice(to, 0, fromId);
-  rememberOrder(week.id, order);
-  rerenderPanel(week, { keepScroll: true, focusId: fromId, focusMove: to > from ? 1 : -1 });
+  const [item] = blocks.splice(from, 1);
+  blocks.splice(to, 0, item);
+  commitBlocks(week, blocks, { keepScroll: true, focusId: fromId, focusMove: to > from ? 1 : -1 });
+}
+
+function addParagraph(week) {
+  const blocks = movableBlocks(week);
+  const id = `p-${crypto.randomUUID()}`;
+  blocks.push({ id, kind: "text", variant: "copy", text: "" });
+  commitBlocks(week, blocks, { keepScroll: true, focusId: id });
+}
+
+function deleteText(week, id) {
+  if (id === "title") {
+    return;
+  }
+  const blocks = movableBlocks(week).filter((block) => block.id !== id);
+  commitBlocks(week, blocks, { keepScroll: true });
+}
+
+function updateParagraph(week, id, value) {
+  const blocks = movableBlocks(week).map((block) => (
+    block.id === id ? { ...block, text: value } : block
+  ));
+  week.blocks = blocks.map(serializeBlock);
+  allRendered = false;
+  scheduleArchiveSave();
+}
+
+function commitBlocks(week, blocks, options = {}) {
+  week.blocks = blocks.map(serializeBlock);
+  if (edits[week.id]) {
+    delete edits[week.id].order;
+    saveEdits();
+  }
+  allRendered = false;
+  rerenderPanel(week, options);
+  saveArchive();
+}
+
+function serializeBlock(block) {
+  if (block.kind === "text" || block.type === "text") {
+    return {
+      id: block.id,
+      type: "text",
+      variant: block.variant || "copy",
+      text: block.text || ""
+    };
+  }
+  return {
+    id: block.id,
+    type: block.kind || block.type,
+    src: block.src || "",
+    caption: block.caption || ""
+  };
 }
 
 function rerenderPanel(week, options) {
   setTimeout(() => renderPanel(week, options), 0);
 }
 
-function rememberOrder(weekId, order) {
-  weekEdits(weekId).order = order;
-  saveEdits();
-  allRendered = false;
+function scheduleArchiveSave() {
+  clearTimeout(scheduleArchiveSave.timer);
+  scheduleArchiveSave.timer = setTimeout(() => saveArchive(), 350);
+}
+
+async function saveArchive() {
+  try {
+    const response = await fetch("/api/archive", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ weeks })
+    });
+    if (!response.ok) {
+      throw new Error("Save failed");
+    }
+    if (saveError) {
+      saveError = "";
+      const status = panel.querySelector(".doc-save-status");
+      status?.remove();
+    }
+  } catch (error) {
+    saveError = "Could not update archive.json. Start server.py and reopen the page.";
+    if (panel.classList.contains("is-open") && !panel.querySelector(".doc-save-status")) {
+      const status = element("p", "doc-save-status");
+      status.textContent = saveError;
+      panel.querySelector(".doc-add-text")?.insertAdjacentElement("afterend", status);
+    }
+  }
 }
 
 function saveField(weekId, key, value) {

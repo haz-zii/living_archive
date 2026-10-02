@@ -381,6 +381,11 @@ button.view-all:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+.doc-block.is-locked {
+    padding-top: 0;
+    border-top: 0;
+}
+
 .doc-block > :not(.doc-block-bar) {
     margin-top: 12px;
 }
@@ -437,6 +442,22 @@ button.view-all:hover {
 .doc-inline:disabled {
     opacity: 0.35;
     cursor: default;
+}
+
+.doc-add-text {
+    margin-top: 29px;
+    font-size: 15px;
+    letter-spacing: -1px;
+}
+
+.doc-save-status {
+    margin: 12px 0 0;
+    color: #DFFF0D;
+    font-family: "Azeret Mono", monospace;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: -0.4px;
+    line-height: 1.5;
 }
 
 .doc-feedback {
