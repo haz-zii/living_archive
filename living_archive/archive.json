@@ -6,7 +6,12 @@
       "date": "29th Aug",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-02",
@@ -14,7 +19,12 @@
       "date": "4th Sep",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-03",
@@ -22,7 +32,12 @@
       "date": "11th Sep",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-04",
@@ -30,7 +45,12 @@
       "date": "18th Sep",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-05",
@@ -99,7 +119,12 @@
           "type": "video",
           "src": "media/week_05_sep15/touchdesigner_final_outcome03.mov"
         }
-      ]
+      ],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-06",
@@ -128,7 +153,12 @@
           "type": "video",
           "src": "media/week_06_oct02/final_with_VHSfilter.mov"
         }
-      ]
+      ],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-07",
@@ -136,7 +166,12 @@
       "date": "9th Oct",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-08",
@@ -144,7 +179,12 @@
       "date": "16th Oct",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-09",
@@ -152,7 +192,12 @@
       "date": "23rd Oct",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-10",
@@ -160,7 +205,12 @@
       "date": "30th Oct",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-11",
@@ -168,7 +218,12 @@
       "date": "6th Nov",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-12",
@@ -176,7 +231,12 @@
       "date": "13th Nov",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-13",
@@ -184,7 +244,12 @@
       "date": "20th Nov",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-14",
@@ -192,7 +257,12 @@
       "date": "27th Nov",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-15",
@@ -200,7 +270,12 @@
       "date": "4th Dec",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     },
     {
       "id": "week-16",
@@ -208,7 +283,12 @@
       "date": "11th Dec",
       "title": "",
       "description": "",
-      "process": []
+      "process": [],
+      "feedback": {
+        "text": "",
+        "nextSteps": "",
+        "media": []
+      }
     }
   ]
 }
