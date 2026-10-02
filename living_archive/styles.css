@@ -251,11 +251,6 @@ button.view-all:hover {
     transform: translateY(-2px);
 }
 
-body:has(.doc-panel.is-open) button.view-all {
-    position: relative;
-    z-index: 30;
-}
-
 .doc-panel {
     position: fixed;
     top: 0;
