@@ -343,6 +343,40 @@ button.view-all:hover {
     white-space: pre-wrap;
 }
 
+.doc-notation > .doc-copy:first-child {
+    margin-top: 0;
+}
+
+.doc-codeblock {
+    margin: 16px 0 0;
+    padding: 14px 16px;
+    background: #272822;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    overflow-x: auto;
+    color: #f8f8f2;
+    font-family: "Azeret Mono", monospace;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0;
+    white-space: pre;
+}
+
+.doc-codeblock code {
+    font: inherit;
+    letter-spacing: 0;
+}
+
+.tok-keyword { color: #f92672; }
+.tok-string { color: #e6db74; }
+.tok-number { color: #ae81ff; }
+.tok-comment { color: #75715e; }
+.tok-function { color: #66d9ef; }
+.tok-tag { color: #f92672; }
+.tok-attr { color: #a6e22e; }
+.tok-property { color: #66d9ef; }
+.tok-selector { color: #a6e22e; }
+
 .doc-process {
     margin-top: 29px;
     padding-top: 21px;

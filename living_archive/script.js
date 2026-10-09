@@ -273,8 +273,12 @@ function renderBlock(block, index, total, week, options) {
           ? "doc-caption"
           : "doc-copy";
     const node = element(tag, className);
-    node.textContent = block.text;
-    section.append(node);
+    if (className === "doc-copy" && block.text.includes("```")) {
+      section.append(renderNotation(block.text));
+    } else {
+      node.textContent = block.text;
+      section.append(node);
+    }
     return section;
   }
 
@@ -450,6 +454,189 @@ function readOnlyNote(label, value) {
   copy.textContent = value;
   wrap.append(name, copy);
   return wrap;
+}
+
+function renderNotation(text) {
+  const wrap = element("div", "doc-notation");
+  const pattern = /```[^\n]*\n([\s\S]*?)```/g;
+  let last = 0;
+  let match = pattern.exec(text);
+  while (match) {
+    appendProse(wrap, text.slice(last, match.index));
+    wrap.append(renderCodeBlock(match[1].replace(/\n$/, "")));
+    last = match.index + match[0].length;
+    match = pattern.exec(text);
+  }
+  appendProse(wrap, text.slice(last));
+  return wrap;
+}
+
+function appendProse(wrap, text) {
+  text.split(/\n{2,}/).forEach((paragraph) => {
+    const value = paragraph.trim();
+    if (!value) {
+      return;
+    }
+    const node = element("p", "doc-copy");
+    node.textContent = value;
+    wrap.append(node);
+  });
+}
+
+function renderCodeBlock(code) {
+  const pre = element("pre", "doc-codeblock");
+  const codeNode = document.createElement("code");
+  highlightCode(code).forEach((token) => {
+    if (!token.type) {
+      codeNode.append(token.text);
+      return;
+    }
+    const span = element("span", `tok-${token.type}`);
+    span.textContent = token.text;
+    codeNode.append(span);
+  });
+  pre.append(codeNode);
+  return pre;
+}
+
+const CODE_KEYWORDS = new Set([
+  "const", "let", "var", "function", "return", "if", "else", "for", "while",
+  "new", "this", "true", "false", "null", "undefined", "typeof", "of", "in",
+  "class", "async", "await", "import", "from", "export", "default", "try",
+  "catch", "throw"
+]);
+
+function highlightCode(code) {
+  const tokens = [];
+  let index = 0;
+  while (index < code.length) {
+    const rest = code.slice(index);
+    if (rest.startsWith("//")) {
+      const end = code.indexOf("\n", index);
+      const stop = end === -1 ? code.length : end;
+      tokens.push({ type: "comment", text: code.slice(index, stop) });
+      index = stop;
+      continue;
+    }
+    if (rest.startsWith("/*")) {
+      const end = code.indexOf("*/", index + 2);
+      const stop = end === -1 ? code.length : end + 2;
+      tokens.push({ type: "comment", text: code.slice(index, stop) });
+      index = stop;
+      continue;
+    }
+    const string = readString(code, index);
+    if (string) {
+      tokens.push({ type: "string", text: string });
+      index += string.length;
+      continue;
+    }
+    if (code[index] === "<" && /[A-Za-z/!]/.test(code[index + 1] || "")) {
+      index += readTag(code, index, tokens);
+      continue;
+    }
+    const hex = rest.match(/^#[0-9a-fA-F]{3,8}\b/);
+    if (hex) {
+      tokens.push({ type: "number", text: hex[0] });
+      index += hex[0].length;
+      continue;
+    }
+    const selector = rest.match(/^#[-\w]+/);
+    if (selector) {
+      tokens.push({ type: "selector", text: selector[0] });
+      index += selector[0].length;
+      continue;
+    }
+    if (/[0-9]/.test(code[index]) && (index === 0 || !/[A-Za-z_$]/.test(code[index - 1]))) {
+      const number = rest.match(/^\d*\.?\d+/)[0];
+      tokens.push({ type: "number", text: number });
+      index += number.length;
+      continue;
+    }
+    const word = rest.match(/^[A-Za-z_$#][\w$-]*/);
+    if (word) {
+      const after = code.slice(index + word[0].length);
+      const nextChar = after[after.match(/^\s*/)[0].length] || "";
+      let type = "";
+      if (CODE_KEYWORDS.has(word[0])) {
+        type = "keyword";
+      } else if (nextChar === "(") {
+        type = "function";
+      } else if (nextChar === ":") {
+        type = "property";
+      } else if (nextChar === "{" || nextChar === ",") {
+        type = "selector";
+      }
+      tokens.push({ type, text: word[0] });
+      index += word[0].length;
+      continue;
+    }
+    tokens.push({ type: "", text: code[index] });
+    index += 1;
+  }
+  return tokens;
+}
+
+function readString(code, index) {
+  const quote = code[index];
+  if (quote !== "'" && quote !== "\"" && quote !== "`") {
+    return "";
+  }
+  let cursor = index + 1;
+  while (cursor < code.length) {
+    if (code[cursor] === "\\") {
+      cursor += 2;
+      continue;
+    }
+    if (code[cursor] === quote) {
+      return code.slice(index, cursor + 1);
+    }
+    if (quote !== "`" && code[cursor] === "\n") {
+      return code.slice(index, cursor);
+    }
+    cursor += 1;
+  }
+  return code.slice(index);
+}
+
+function readTag(code, index, tokens) {
+  let cursor = index + 1;
+  tokens.push({ type: "", text: "<" });
+  if (code[cursor] === "/") {
+    tokens.push({ type: "", text: "/" });
+    cursor += 1;
+  }
+  const name = code.slice(cursor).match(/^[A-Za-z][\w-]*/);
+  if (name) {
+    tokens.push({ type: "tag", text: name[0] });
+    cursor += name[0].length;
+  }
+  while (cursor < code.length && code[cursor] !== ">") {
+    if (/\s/.test(code[cursor])) {
+      tokens.push({ type: "", text: code[cursor] });
+      cursor += 1;
+      continue;
+    }
+    const attribute = code.slice(cursor).match(/^[A-Za-z_:][\w:.-]*/);
+    if (attribute) {
+      tokens.push({ type: "attr", text: attribute[0] });
+      cursor += attribute[0].length;
+      continue;
+    }
+    const string = readString(code, cursor);
+    if (string) {
+      tokens.push({ type: "string", text: string });
+      cursor += string.length;
+      continue;
+    }
+    tokens.push({ type: "", text: code[cursor] });
+    cursor += 1;
+  }
+  if (code[cursor] === ">") {
+    tokens.push({ type: "", text: ">" });
+    cursor += 1;
+  }
+  return cursor - index;
 }
 
 function renderMedia(item, options) {
