@@ -155,8 +155,8 @@
         }
       ],
       "feedback": {
-        "text": "",
-        "nextSteps": "",
+        "text": "Clinton told me to rethink my animation as a live performance site rather than a single, one time experience. Instead of the animation and sound completing one cycle after a phrase such as “hello world” is typed, the code should operate in a continuous, looping sequence, progressing phrase by phrase while the visuals and sound continue to respond to the user's input.He also suggested expanding the system's parameters to give users more control over the sound, such as adjusting pitch and introducing other sonic variations. Rather than using Strudel as the sound engine, he recommended exploring Tone.js, specifically its FM Synth example, as a starting point for generating sound.This feedback shifts the project toward a more open ended, performative experience, where typing becomes an ongoing interaction between language, sound, and visuals.",
+        "nextSteps": "For next week, I will focus on developing the looping sequence and exploring the sound parameters. Revising the animation itself will be addressed in the following iteration.",
         "media": []
       }
     },
