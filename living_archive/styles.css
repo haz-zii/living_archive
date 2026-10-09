@@ -340,6 +340,7 @@ button.view-all:hover {
     font-style: normal;
     line-height: 1.5;
     letter-spacing: -0.4px;
+    white-space: pre-wrap;
 }
 
 .doc-process {

@@ -498,12 +498,17 @@ function legacyBlocks(week) {
   process.forEach((item, index) => {
     const id = item.id || `process-${index}`;
     if (item.type === "text" || (item.text && !item.src)) {
-      blocks.push({
-        id,
-        kind: "text",
-        variant: item.variant || "copy",
-        text: item.text || ""
-      });
+      if (item.title) {
+        blocks.push({ id: `${id}-title`, kind: "text", variant: "process-title", text: item.title });
+      }
+      if (item.text) {
+        blocks.push({
+          id,
+          kind: "text",
+          variant: item.variant || "copy",
+          text: item.text
+        });
+      }
       return;
     }
     if (item.title) {
