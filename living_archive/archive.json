@@ -134,7 +134,65 @@
       "description": "The same material rebuilt in the browser: coded animation, type driven by music, and a VHS filter on the final pass.",
       "process": [
         {
-          "title": "Animation, Coded",
+          "title": "A full-screen field of cubes. The projection that turned them into chevrons. The black page in Chrome. The canvas line that also painted black.
+          
+          The film plays the iterations of this step, in order, and loops. Export video records one pass at 1920×1080. Quiet differences are lifted just enough to survive compression. The settled field under the film is the picture I kept.
+
+          I started from the TouchDesigner field: a rectangle of isometric cubes, some filled, some outlined, pastel faces on a saturated ground. No buttons, no sliders, no menus. The page had to be the picture.
+
+          STEP 1 — THE PAGE IS THE FIELD
+          A browser page arrives with a margin, a scrollbar, and a white background. I stripped that before I drew anything, and I set the background to the green of the first scene so the first paint already belonged to the work.
+
+          html, body {
+          margin: 0;
+          height: 100%;
+          background: #3ad24c;
+          color-scheme: only light;
+          overflow: hidden;
+          }
+
+          Margin 0 removes the white gap around the canvas. Height 100 percent gives the canvas a real box. Overflow hidden keeps a growing sentence from stretching the page into a scroll. The green is doing two jobs, and I only understood the second one later: it is the artwork, and it is also what I see when the drawing loop has died. A flat green field became my signal that the frame had stopped.
+
+          STEP 2 — THE FIRST CUBES WERE THE WRONG SHAPE
+          I projected the cubes with a camera that looked along (1, −1, 1). The faces collapsed into chevrons. The grid was there, and it was unreadable as cubes. I changed the view to looking along (1, 1, 1), and I used the isometric projection that puts a cube’s silhouette on a regular hexagon.
+
+          const INV_SQRT2 = 1 / Math.sqrt(2);
+          const INV_SQRT6 = 1 / Math.sqrt(6);
+
+          function projectPoint(v, cubeSize) {
+            return [
+              (v[0] - v[1]) * INV_SQRT2 * cubeSize,
+              (v[0] + v[1] - 2 * v[2]) * INV_SQRT6 * cubeSize,
+            ];
+          }
+          x and y are the ground axes. z is up. The first line is the screen x: the difference of x and y, which is the isometric horizontal. The second line is the screen y: x and y both fall away from the camera, and z rises. Multiplying by the cube size happens after the projection, so a resize scales the drawing and does not change the shape. Filled cells and outlined cells alternate with (column + row) even or odd, so the checker is a property of the grid, not a texture.
+
+          STEP 3 — CHROME WAS BLACK, THE PREVIEW WAS GREEN
+          I opened the same page in Chrome and saw black. The preview inside the editor was the green field with the cubes. The drawing code had not changed between the two views. Chrome was recoloring the page into a dark scheme.
+
+          <meta name="color-scheme" content="only light">
+          Only light tells the browser this document is already the color I chose. I repeat it in the CSS so the page and the controls agree. After that, a hard refresh showed the field. I kept the meta on every later page, including these notes, because the bug was the browser, not the cubes.
+
+          STEP 4 — AN OPAQUE CANVAS ALSO WENT BLACK
+          While I was chasing the black frame I tried to make the canvas opaque, which is a common way to speed up a full-screen drawing. On this machine that context composites as black, even when the pixels I write are green.
+
+          const ctx = canvas.getContext('2d');
+          I leave the context on its default, which keeps an alpha channel. I do not pass alpha: false. The speed was not worth a canvas the compositor throws away.
+
+          STEP 5 — SHARP ON A RETINA SCREEN, STILL DRAWN IN CSS PIXELS
+          If I size the canvas to the window in CSS pixels, a 2x display blurs the edges of the cubes. If I draw in device pixels everywhere, every coordinate in the grid math has to know the screen. I split those.
+
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.round(viewW * dpr);
+          canvas.height = Math.round(viewH * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          devicePixelRatio is 2 on the retina machines I was using. I cap it at 2 so a denser screen does not triple the bitmap. The canvas width and height are the bitmap. The CSS size stays the window. setTransform scales the pen, so a cube at x = 100 is still 100 CSS pixels from the left, and it lands on 200 device pixels. The grid math never hears about the screen density.
+
+          At the end of this step the picture holds: a field of cubes, filled and outlined, filling the window. Nothing is interactive yet. The next step is to play it by typing.
+
+
+
+          ",
           "type": "video",
           "src": "media/week_06_oct02/animation_coded.mov"
         },
