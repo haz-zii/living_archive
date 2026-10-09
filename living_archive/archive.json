@@ -188,11 +188,7 @@
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           devicePixelRatio is 2 on the retina machines I was using. I cap it at 2 so a denser screen does not triple the bitmap. The canvas width and height are the bitmap. The CSS size stays the window. setTransform scales the pen, so a cube at x = 100 is still 100 CSS pixels from the left, and it lands on 200 device pixels. The grid math never hears about the screen density.
 
-          At the end of this step the picture holds: a field of cubes, filled and outlined, filling the window. Nothing is interactive yet. The next step is to play it by typing.
-
-
-
-          ",
+          At the end of this step the picture holds: a field of cubes, filled and outlined, filling the window. Nothing is interactive yet. The next step is to play it by typing.",
           "type": "video",
           "src": "media/week_06_oct02/animation_coded.mov"
         },
