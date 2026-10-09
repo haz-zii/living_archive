@@ -514,6 +514,28 @@ button.view-all:hover {
     margin-top: 8px;
 }
 
+.doc-submit-block {
+    margin-top: 21px;
+}
+
+.doc-submit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doc-code {
+    width: 140px;
+    min-height: 0;
+    height: 32px;
+    padding: 6px 10px;
+}
+
+.doc-submit-button {
+    font-size: 15px;
+    letter-spacing: -1px;
+}
+
 .doc-upload-label {
     position: relative;
     display: inline-block;

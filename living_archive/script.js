@@ -7,6 +7,7 @@ const allWeeks = document.getElementById("all-weeks");
 const allScroll = document.getElementById("all-weeks-scroll");
 
 const LAYOUT_KEY = "living-archive-layout";
+const SUBMIT_CODE = "hazywazy";
 
 let weeks = [];
 let lastTrigger = null;
@@ -347,7 +348,7 @@ function renderFeedback(week, options) {
   heading.textContent = "Feedback & next steps";
   section.append(heading);
 
-  const notes = feedbackFor(week);
+  const notes = options.variant === "panel" ? draftFeedback(week) : publishedFeedback(week);
   const editable = options.variant === "panel";
   const uploaded = uploadsFor(week);
   const hasNotes = notes.text || notes.nextSteps || notes.media.length || uploaded.length;
@@ -415,6 +416,7 @@ function renderFeedback(week, options) {
     });
     add.append(input);
     section.append(add);
+    section.append(renderSubmit(week));
   } else if (!hasNotes) {
     const empty = element("p", "doc-copy");
     empty.textContent = "Nothing recorded yet.";
@@ -431,6 +433,7 @@ function renderFeedbackField(week, key, label, value) {
   const input = document.createElement("textarea");
   input.className = "doc-input";
   input.rows = 3;
+  input.dataset.field = key;
   input.value = value;
   input.addEventListener("input", () => {
     saveField(week.id, key, input.value);
@@ -535,14 +538,123 @@ function explicitBlocks(list) {
   });
 }
 
-function feedbackFor(week) {
+function publishedFeedback(week) {
   const base = week.feedback && typeof week.feedback === "object" ? week.feedback : {};
-  const saved = edits[week.id] || {};
   return {
-    text: Object.prototype.hasOwnProperty.call(saved, "feedback") ? saved.feedback : (base.text || ""),
-    nextSteps: Object.prototype.hasOwnProperty.call(saved, "nextSteps") ? saved.nextSteps : (base.nextSteps || ""),
+    text: base.text || "",
+    nextSteps: base.nextSteps || "",
     media: Array.isArray(base.media) ? base.media : []
   };
+}
+
+function draftFeedback(week) {
+  const published = publishedFeedback(week);
+  const saved = edits[week.id] || {};
+  return {
+    text: Object.prototype.hasOwnProperty.call(saved, "feedback") ? saved.feedback : published.text,
+    nextSteps: Object.prototype.hasOwnProperty.call(saved, "nextSteps") ? saved.nextSteps : published.nextSteps,
+    media: published.media
+  };
+}
+
+function renderSubmit(week) {
+  const block = element("div", "doc-submit-block");
+  const row = element("div", "doc-submit");
+  const code = document.createElement("input");
+  code.type = "text";
+  code.className = "doc-input doc-code";
+  code.setAttribute("aria-label", "Code");
+  code.autocomplete = "off";
+  code.spellcheck = false;
+  const button = element("button", "doc-inline doc-submit-button");
+  button.type = "button";
+  button.textContent = "Submit";
+  const status = element("p", "doc-save-status");
+  status.hidden = true;
+  button.addEventListener("click", () => submitFeedback(week, code, status));
+  code.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") {
+      return;
+    }
+    event.preventDefault();
+    submitFeedback(week, code, status);
+  });
+  row.append(code, button);
+  block.append(row, status);
+  return block;
+}
+
+function submitFeedback(week, codeInput, status) {
+  const entered = codeInput.value.trim();
+  if (!entered) {
+    showStatus(status, "Enter the code, then submit.");
+    codeInput.focus();
+    return;
+  }
+  if (entered !== SUBMIT_CODE) {
+    showStatus(status, "That code is not right.");
+    codeInput.focus();
+    return;
+  }
+
+  const fields = Object.fromEntries(
+    [...panel.querySelectorAll(".doc-feedback textarea[data-field]")].map((field) => [field.dataset.field, field.value])
+  );
+  if (!week.feedback || typeof week.feedback !== "object") {
+    week.feedback = { text: "", nextSteps: "", media: [] };
+  }
+  week.feedback.text = fields.feedback || "";
+  week.feedback.nextSteps = fields.nextSteps || "";
+  if (!Array.isArray(week.feedback.media)) {
+    week.feedback.media = [];
+  }
+  clearFeedbackDraft(week.id);
+  allRendered = false;
+  publishArchive(status);
+}
+
+function clearFeedbackDraft(weekId) {
+  const saved = edits[weekId];
+  if (!saved) {
+    return;
+  }
+  delete saved.feedback;
+  delete saved.nextSteps;
+  saveEdits();
+}
+
+function showStatus(status, message) {
+  status.hidden = false;
+  status.textContent = message;
+}
+
+async function publishArchive(status) {
+  const payload = JSON.stringify({ weeks }, null, 2) + "\n";
+  try {
+    const response = await fetch("/api/archive", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload
+    });
+    if (!response.ok) {
+      throw new Error("Save failed");
+    }
+    showStatus(status, "Saved archive.json. Commit and push it on GitHub so everyone with the link can see the notes.");
+  } catch (error) {
+    downloadText("archive.json", payload);
+    showStatus(status, "Downloaded archive.json. Replace the file in the project, then commit and push on GitHub. The live site updates after Render finishes that deploy.");
+  }
+}
+
+function downloadText(filename, text) {
+  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
 function uploadsFor(week) {
