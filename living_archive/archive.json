@@ -18,11 +18,36 @@
       "week": "Week 02",
       "date": "4th Sep",
       "title": "",
-      "description": "",
-      "process": [],
+      "description": "During this Week, I visited the Museum of the Moving Image (MoMI), where I explored Overexposed: Art, Technology, and the Body and The Jim Henson Exhibition. Both exhibitions encouraged me to think about the relationship between technology, physical objects, and the human body, particularly how interaction can become part of a visual or sensory experience.\n\nFollowing our introduction to the 256 Project in Week 1, I began exploring tactile buttons as the subject of my collection. The museum visit gave me an opportunity to consider how physical objects can communicate, trigger responses, and create interactions between people and technology.\n\nThis became an early starting point for my collection, allowing me to explore an everyday object through a more intentional process of visual research.",
+      "process": [
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5152.jpeg"
+        },
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5156.jpg"
+        },
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5158.jpeg"
+        },
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5159.jpeg"
+        },
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5168.jpeg"
+        },
+        {
+          "type": "image",
+          "src": "media/week_02_sep04/IMG_5172.jpeg"
+        }
+      ],
       "feedback": {
         "text": "",
-        "nextSteps": "",
+        "nextSteps": "Begin collecting images of tactile buttons and explore different ways to organize them. Develop a spreadsheet to document the collection and identify possible categories that could guide the book's structure.",
         "media": []
       }
     },
@@ -31,11 +56,16 @@
       "week": "Week 03",
       "date": "11th Sep",
       "title": "",
-      "description": "",
-      "process": [],
+      "description": "During Week 3, I created my first spreadsheet to organize the images gathered for the 256 Project. I initially developed approximately 16 categories to classify different types of tactile buttons according to their characteristics, functions, and contexts.\n\nBell buttons\nDoorbell buttons\nPush buttons in art\nButtons (musical instrument)\nChord buttons\nAlphameric foam and foil\nButtons of typewriters\nCall buttons in Russia\nElevator buttons\nRequest stop push buttons\nGame controller buttons / Bemani controller buttons\nGame controller buttons / Face buttons\nGame controller buttons\nPush buttons\nDamaged push buttons\nDetermination test\nEject buttons\nButtons (GUI)\nButton panels\nPower buttons\nPush button light switches\nEmergency signal buttons\nDiagrams of emergency alarm signs\nComputer keyboard keys\nCall buttons\nRecessed power buttons\nOrginial Pics I took\nArticles / Books\n\nThis spreadsheet became the foundation for organizing the collection, allowing me to track the images and establish a structure for the research. At this stage, my approach focused primarily on identifying the different types of buttons I could collect and how they could be grouped together.\n\nAs the collection developed, I began considering how to translate the spreadsheet into a physical book. This meant moving beyond gathering and categorizing images toward making editorial decisions about how the collection would be organized, presented, and experienced by the reader.\n\nFollowing this feedback, I reconsidered how the images could be connected through a stronger conceptual framework rather than being divided into numerous classifications. This led me to reorganize the collection into two sections, INITIATE and INTERRUPT, focusing on the actions buttons perform rather than the many types of buttons that exist.",
+      "process": [
+        {
+          "type": "image",
+          "src": "media/week_03_sep11/v1_buttons_256.jpg"
+        }
+      ],
       "feedback": {
-        "text": "",
-        "nextSteps": "",
+        "text": "Clinton noted that the collection contained too many categories and risked becoming simply an assortment of buttons. He encouraged me to narrow the scope of the project and simplify the book's structure.",
+        "nextSteps": "Reconsider the categories and identify a stronger conceptual connection between the collected images. Reduce the number of categories and develop a simpler editorial structure for the book, focusing on the actions and functions of buttons rather than their many variations.",
         "media": []
       }
     },
@@ -44,8 +74,23 @@
       "week": "Week 04",
       "date": "18th Sep",
       "title": "",
-      "description": "",
-      "process": [],
+      "description": "During Week 4, I restructured the collection into two sections: INITIATE and INTERRUPT. Instead of maintaining numerous categories, I organized the buttons according to the actions they perform.\n\nINITIATE brings together buttons associated with starting, activating, or triggering an action, while INTERRUPT focuses on buttons associated with stopping, cancelling, resetting, or disrupting an action. This structure allowed me to approach the collection through function and interaction rather than simply classifying buttons by their physical appearance.\n\nI also developed the physical format of the book as a minimal 4 × 6-inch hardcover. I wanted the compact format and straightforward presentation to keep the focus on the collected images and the relationships between them.\n\nThis iteration marked a shift in the project from a broad visual inventory toward a more focused editorial collection. By organizing the images around two opposing actions, I began exploring how buttons communicate instructions and mediate interactions between people and machines.",
+      "process": [
+        {
+          "type": "image",
+          "src": "media/week_04_sep18/INTITATE.jpeg",
+          "title": "INITIATE"
+        },
+        {
+          "type": "image",
+          "src": "media/week_04_sep18/INTERRUPT.jpeg",
+          "title": "INTERRUPT"
+        },
+        {
+          "type": "video",
+          "src": "media/week_04_sep18/Final_video_book.mp4"
+        }
+      ],
       "feedback": {
         "text": "",
         "nextSteps": "",
