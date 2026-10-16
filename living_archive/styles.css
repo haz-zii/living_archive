@@ -319,6 +319,10 @@ button.view-all:hover {
     color: #DFFF0D;
 }
 
+.doc-panel .doc-title {
+    color: #DFFF0D;
+}
+
 .doc-title {
     margin: 29px 0 0;
     color: #FFF;
@@ -608,6 +612,10 @@ button.view-all:hover {
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 29px 20px 20px;
+}
+
+.all-week > .doc-kicker {
+    color: #DFFF0D;
 }
 
 .all-week + .all-week {
