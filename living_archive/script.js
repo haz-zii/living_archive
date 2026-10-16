@@ -7,13 +7,11 @@ const allWeeks = document.getElementById("all-weeks");
 const allScroll = document.getElementById("all-weeks-scroll");
 
 const LAYOUT_KEY = "living-archive-layout";
-const SUBMIT_CODE = "hazywazy";
 
 let weeks = [];
 let lastTrigger = null;
 let allRendered = false;
 let edits = {};
-let uploads = [];
 let dragBlockId = "";
 let saveError = "";
 
@@ -24,7 +22,7 @@ function init() {
   allLayer.addEventListener("click", onAllLayerClick);
   document.addEventListener("click", onDocumentClick);
   document.addEventListener("keydown", onKeydown);
-  Promise.all([loadArchive(), loadUploads()]).catch(() => {});
+  loadArchive();
 }
 
 async function loadArchive() {
@@ -352,28 +350,19 @@ function renderFeedback(week, options) {
   heading.textContent = "Feedback & next steps";
   section.append(heading);
 
-  const notes = options.variant === "panel" ? draftFeedback(week) : publishedFeedback(week);
-  const editable = options.variant === "panel";
-  const uploaded = uploadsFor(week);
-  const hasNotes = notes.text || notes.nextSteps || notes.media.length || uploaded.length;
+  const notes = publishedFeedback(week);
 
-  if (editable) {
-    section.append(renderFeedbackField(week, "feedback", "Feedback", notes.text));
-    section.append(renderFeedbackField(week, "nextSteps", "Next steps", notes.nextSteps));
-  } else if (notes.text) {
+  if (notes.text) {
     section.append(readOnlyNote("Feedback", notes.text));
   }
-
-  if (!editable && notes.nextSteps) {
+  if (notes.nextSteps) {
     section.append(readOnlyNote("Next steps", notes.nextSteps));
   }
 
-  if (notes.media.length || uploaded.length) {
+  const media = notes.media.filter((item) => item.src && (item.type === "image" || item.type === "video"));
+  if (media.length) {
     const mediaWrap = element("div", "doc-feedback-media");
-    notes.media.forEach((item) => {
-      if (!(item.src && (item.type === "image" || item.type === "video"))) {
-        return;
-      }
+    media.forEach((item) => {
       const figure = element("figure", "doc-upload");
       figure.append(renderMedia(item, options));
       if (item.caption) {
@@ -383,67 +372,10 @@ function renderFeedback(week, options) {
       }
       mediaWrap.append(figure);
     });
-    uploaded.forEach((item) => {
-      const figure = element("figure", "doc-upload");
-      const url = URL.createObjectURL(item.blob);
-      figure.append(renderMedia({
-        type: item.type,
-        src: url,
-        caption: item.name,
-        objectUrl: true
-      }, options));
-      if (editable) {
-        const remove = element("button", "doc-inline");
-        remove.type = "button";
-        remove.textContent = "Remove";
-        remove.setAttribute("aria-label", `Remove ${item.name}`);
-        remove.addEventListener("click", () => removeUpload(week, item.id));
-        figure.append(remove);
-      }
-      mediaWrap.append(figure);
-    });
     section.append(mediaWrap);
   }
 
-  if (editable) {
-    const add = element("label", "doc-upload-label");
-    add.textContent = "Add image or video";
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*,video/*";
-    input.multiple = true;
-    input.className = "doc-file";
-    input.addEventListener("change", () => {
-      const files = [...input.files];
-      input.value = "";
-      addUploads(week, files);
-    });
-    add.append(input);
-    section.append(add);
-    section.append(renderSubmit(week));
-  } else if (!hasNotes) {
-    const empty = element("p", "doc-copy");
-    empty.textContent = "Nothing recorded yet.";
-    section.append(empty);
-  }
-
   return section;
-}
-
-function renderFeedbackField(week, key, label, value) {
-  const wrap = element("label", "doc-field");
-  const name = element("span", "doc-kicker");
-  name.textContent = label;
-  const input = document.createElement("textarea");
-  input.className = "doc-input";
-  input.rows = 3;
-  input.dataset.field = key;
-  input.value = value;
-  input.addEventListener("input", () => {
-    saveField(week.id, key, input.value);
-  });
-  wrap.append(name, input);
-  return wrap;
 }
 
 function readOnlyNote(label, value) {
@@ -739,120 +671,6 @@ function publishedFeedback(week) {
   };
 }
 
-function draftFeedback(week) {
-  const published = publishedFeedback(week);
-  const saved = edits[week.id] || {};
-  return {
-    text: Object.prototype.hasOwnProperty.call(saved, "feedback") ? saved.feedback : published.text,
-    nextSteps: Object.prototype.hasOwnProperty.call(saved, "nextSteps") ? saved.nextSteps : published.nextSteps,
-    media: published.media
-  };
-}
-
-function renderSubmit(week) {
-  const block = element("div", "doc-submit-block");
-  const row = element("div", "doc-submit");
-  const code = document.createElement("input");
-  code.type = "text";
-  code.className = "doc-input doc-code";
-  code.setAttribute("aria-label", "Code");
-  code.autocomplete = "off";
-  code.spellcheck = false;
-  const button = element("button", "doc-inline doc-submit-button");
-  button.type = "button";
-  button.textContent = "Submit";
-  const status = element("p", "doc-save-status");
-  status.hidden = true;
-  button.addEventListener("click", () => submitFeedback(week, code, status));
-  code.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") {
-      return;
-    }
-    event.preventDefault();
-    submitFeedback(week, code, status);
-  });
-  row.append(code, button);
-  block.append(row, status);
-  return block;
-}
-
-function submitFeedback(week, codeInput, status) {
-  const entered = codeInput.value.trim();
-  if (!entered) {
-    showStatus(status, "Enter the code, then submit.");
-    codeInput.focus();
-    return;
-  }
-  if (entered !== SUBMIT_CODE) {
-    showStatus(status, "That code is not right.");
-    codeInput.focus();
-    return;
-  }
-
-  const fields = Object.fromEntries(
-    [...panel.querySelectorAll(".doc-feedback textarea[data-field]")].map((field) => [field.dataset.field, field.value])
-  );
-  if (!week.feedback || typeof week.feedback !== "object") {
-    week.feedback = { text: "", nextSteps: "", media: [] };
-  }
-  week.feedback.text = fields.feedback || "";
-  week.feedback.nextSteps = fields.nextSteps || "";
-  if (!Array.isArray(week.feedback.media)) {
-    week.feedback.media = [];
-  }
-  clearFeedbackDraft(week.id);
-  allRendered = false;
-  publishArchive(status);
-}
-
-function clearFeedbackDraft(weekId) {
-  const saved = edits[weekId];
-  if (!saved) {
-    return;
-  }
-  delete saved.feedback;
-  delete saved.nextSteps;
-  saveEdits();
-}
-
-function showStatus(status, message) {
-  status.hidden = false;
-  status.textContent = message;
-}
-
-async function publishArchive(status) {
-  const payload = JSON.stringify({ weeks }, null, 2) + "\n";
-  try {
-    const response = await fetch("/api/archive", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: payload
-    });
-    if (!response.ok) {
-      throw new Error("Save failed");
-    }
-    showStatus(status, "Saved archive.json. Commit and push it on GitHub so everyone with the link can see the notes.");
-  } catch (error) {
-    downloadText("archive.json", payload);
-    showStatus(status, "Downloaded archive.json. Replace the file in the project, then commit and push on GitHub. The live site updates after Render finishes that deploy.");
-  }
-}
-
-function downloadText(filename, text) {
-  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
-}
-
-function uploadsFor(week) {
-  return uploads.filter((item) => item.weekId === week.id);
-}
-
 function moveBlock(week, id, direction) {
   const blocks = movableBlocks(week);
   const index = blocks.findIndex((block) => block.id === id);
@@ -966,19 +784,6 @@ async function saveArchive() {
   }
 }
 
-function saveField(weekId, key, value) {
-  weekEdits(weekId)[key] = value;
-  saveEdits();
-  allRendered = false;
-}
-
-function weekEdits(weekId) {
-  if (!edits[weekId]) {
-    edits[weekId] = {};
-  }
-  return edits[weekId];
-}
-
 function loadEdits() {
   try {
     const parsed = JSON.parse(localStorage.getItem(LAYOUT_KEY) || "{}");
@@ -994,92 +799,6 @@ function saveEdits() {
   } catch (error) {
     return;
   }
-}
-
-async function addUploads(week, files) {
-  for (const file of files) {
-    const type = fileKind(file);
-    if (!type) {
-      continue;
-    }
-    const record = {
-      id: crypto.randomUUID(),
-      weekId: week.id,
-      type,
-      name: file.name,
-      blob: file
-    };
-    await idbPut(record);
-    uploads.push(record);
-  }
-  allRendered = false;
-  renderPanel(week, { keepScroll: true });
-}
-
-async function removeUpload(week, id) {
-  await idbDelete(id);
-  uploads = uploads.filter((item) => item.id !== id);
-  allRendered = false;
-  renderPanel(week, { keepScroll: true });
-}
-
-function fileKind(file) {
-  if (file.type.startsWith("video/")) {
-    return "video";
-  }
-  if (file.type.startsWith("image/")) {
-    return "image";
-  }
-  const name = file.name.toLowerCase();
-  if (/\.(mov|mp4|webm|m4v)$/.test(name)) {
-    return "video";
-  }
-  if (/\.(jpg|jpeg|png|gif|webp)$/.test(name)) {
-    return "image";
-  }
-  return "";
-}
-
-function openDb() {
-  if (!openDb.promise) {
-    openDb.promise = new Promise((resolve, reject) => {
-      const request = indexedDB.open("living-archive", 1);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains("media")) {
-          db.createObjectStore("media", { keyPath: "id" });
-        }
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  }
-  return openDb.promise;
-}
-
-async function loadUploads() {
-  try {
-    const records = await idbRequest("readonly", (store) => store.getAll());
-    uploads = Array.isArray(records) ? records : [];
-  } catch (error) {
-    uploads = [];
-  }
-}
-
-function idbPut(record) {
-  return idbRequest("readwrite", (store) => store.put(record));
-}
-
-function idbDelete(id) {
-  return idbRequest("readwrite", (store) => store.delete(id));
-}
-
-function idbRequest(mode, run) {
-  return openDb().then((db) => new Promise((resolve, reject) => {
-    const request = run(db.transaction("media", mode).objectStore("media"));
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  }));
 }
 
 function revokeObjectUrls(root) {
